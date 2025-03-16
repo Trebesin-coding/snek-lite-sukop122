@@ -3,6 +3,8 @@ from sys import exit
 import random
 import math
 
+#TODO: reset random casu kdyz se ygoodie nesebere vcas (mozna pres cykly)
+
 pg.init()
 
 def image_cut(sheet, frame_x, frame_y, width, height, scale):
@@ -23,6 +25,7 @@ def random_rgood():
         rgood_counter += 1
 
 
+
 def ggoodie_appearence():
     global ggood_rect, elapsed_time1, ggood_visibility, player_score, ggood_counter
 
@@ -40,14 +43,14 @@ def ggoodie_appearence():
     if ggood_visibility and player_rect.colliderect(ggood_rect):
         ggood_visibility = False
         elapsed_time1 = 0
-        player_score += 100
+        player_score += 1000
         ggood_counter += 1
 
 def ygoodie_mech():
-    global elapsed_time2, ygood_visibility, ygood_rect, player_score
+    global elapsed_time2, ygood_visibility, ygood_rect, player_score, random_time
 
 
-    random_time = random.randint(10000, 30000)
+    
     if elapsed_time2 > random_time:
         ygood_x = random.randint(0, screen_width - ygood_img.get_width())
         ygood_y = random.randint(0, screen_height - ygood_img.get_height())
@@ -58,12 +61,14 @@ def ygoodie_mech():
     if elapsed_time2 > 2000 and ygood_visibility: 
         elapsed_time2 = 0            
         ygood_visibility = False
+        
 
     if ygood_visibility and player_rect.colliderect(ygood_rect):
         ygood_visibility = False
         elapsed_time2 = 0
         player_score += 1000
-        
+    
+    
 screen_height = 800
 screen_width = 800
 
@@ -71,6 +76,8 @@ screen = pg.display.set_mode((screen_height, screen_width))
 
 
 clock = pg.time.Clock()
+
+game_won = False
 
 elapsed_time = 0
 elapsed_time1 = 0
@@ -107,24 +114,62 @@ ggood_counter = 0
 #yellow goodie
 ygood_img = pg.image.load("assets/characters/goodies/yellow/ygoodie.png")
 ygood_visibility = False
+random_time = random.randint(10000, 30000)
+ygood_taken = False
 
 #Fonts
 
 font = pg.font.Font("assets/fonts/Jersey20-Regular.ttf", 24)
-font_win = pg.font.Font("assets/fonts/Jacquard24-Regular.ttf", 120)
+font_win = pg.font.Font("assets/fonts/PixelifySans-Regular.ttf", 120)
+font_again = pg.font.Font("assets/fonts/PixelifySans-Regular.ttf", 80)
 
 
-
+#MAIN LOOP
 
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
             exit()
-    if player_score < 1000:
-        key = pg.key.get_pressed()
 
+#MOVEMENT
+
+    key = pg.key.get_pressed()
+
+    if game_won == True:
+        if key[pg.K_x]:
+            running = False
+
+        if key[pg.K_r]:
+            game_won = False
+            player_score = 0
+            player_x, player_y = 150, 150
+            player_rect = player_img.get_rect(midbottom=(player_x, player_y))
+
+            rgood_x = random.randint(0, screen_width - rgood_img.get_width())
+            rgood_y = random.randint(0, screen_height - rgood_img.get_height())
+            rgood_rect = rgood_img.get_rect(midbottom=(rgood_x, rgood_y))
+            rgood_counter = 0
+
+            ggood_visibility = False
+            ggood_counter = 0
+
+            ygood_visibility = False
+            elapsed_time = 0
+            elapsed_time1 = 0
+            elapsed_time2 = 0
+            random_time = random.randint(10000, 30000)
+
+        
+        
+        
+                
+
+    
+    
+    if player_score < 1000:
         moved = False
+
         # W up
         if key[pg.K_w]:
             player_img = image_cut(player_spritesheet, 0, 2, 16, 16, 3)
@@ -204,23 +249,31 @@ while running:
 
         ygoodie_mech()
     
-    
     screen.fill("white")
+    
+    #text_example = font.render(f"{elapsed_time2}", False, "#000000")
 
     text_score = font.render(f"Score: {player_score}", False, "#000000")
     text_X = font.render(f"X: {player_x}", False, "#000000")
     text_Y = font.render(f"Y: {player_y}", False, "#000000")
-    text_time = font.render(f"time: {elapsed_time}", False, "#000000")
+    text_time = font.render(f"time: {random_time}", False, "#000000")
     text_rcounter = font.render(f"Red: {rgood_counter}", False,"#000000")
     text_gcounter = font.render(f"Green: {ggood_counter}", False,"#000000")
-    text_win = font_win.render("!WIN!", False, "#000000")
-
+    text_win = font_win.render("!WIN!", False, "#DC1C1C")
+    text_again1 = font_again.render("Press X to quit", False, "#2DE8DA")
+    text_again2 = font_again.render("Press R to play again", False, "#2DE8DA")
+    
+    
+    #screen.blit(text_example, (screen_width-300, 10))
+    
     screen.blit(text_score, (screen_width-100, 10))
     screen.blit(text_X, (screen_width-100, 30))
     screen.blit(text_Y, (screen_width-100, 50))
     screen.blit(text_time, (screen_width-100, 70))
     screen.blit(text_rcounter, (screen_width-200, 10))
     screen.blit(text_gcounter, (screen_width-200, 30))
+    
+    
 
     screen.blit(player_img, player_rect)
     screen.blit(rgood_img, rgood_rect)
@@ -233,9 +286,13 @@ while running:
 
    
     if player_score >= 1000:
+        game_won = True
         player_img = image_cut(player_spritesheet, 1, 2, 16, 16, 6)
+        player_rect.x = screen_width / 2
+        player_rect.y = screen_height -100
         screen.blit(text_win, (screen_width // 2 - 70 , 200))
-
+        screen.blit(text_again1,(screen_width // 2 -300, 300))
+        screen.blit(text_again2,(screen_width // 2 -300, 400))
 
 
 
