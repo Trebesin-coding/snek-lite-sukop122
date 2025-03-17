@@ -3,7 +3,7 @@ from sys import exit
 import random
 import math
 
-#TODO: reset random casu kdyz se ygoodie nesebere vcas (mozna pres cykly)
+#TODO: udelat promennou 
 
 pg.init()
 
@@ -43,7 +43,7 @@ def ggoodie_appearence():
     if ggood_visibility and player_rect.colliderect(ggood_rect):
         ggood_visibility = False
         elapsed_time1 = 0
-        player_score += 1000
+        player_score += 100
         ggood_counter += 1
 
 def ygoodie_mech():
@@ -61,6 +61,7 @@ def ygoodie_mech():
     if elapsed_time2 > 2000 and ygood_visibility: 
         elapsed_time2 = 0            
         ygood_visibility = False
+        random_time = random.randint(10000, 30000)
         
 
     if ygood_visibility and player_rect.colliderect(ygood_rect):
@@ -79,7 +80,7 @@ clock = pg.time.Clock()
 
 game_won = False
 
-elapsed_time = 0
+elapsed_time_oss = 0
 elapsed_time1 = 0
 elapsed_time2 = 0
 
@@ -93,7 +94,7 @@ player_img_idle = image_cut(player_spritesheet, 0, 0 , 16, 16, 3)
 player_img = player_img_idle
 player_rect = player_img.get_rect(midbottom=(player_x, player_y))
 player_speed = 8
-#player_speed_diag = player_speed / math.sqrt(2)
+player_speed_diag = player_speed / math.sqrt(2)
 player_score = 0
 
 
@@ -135,6 +136,10 @@ while running:
 #MOVEMENT
 
     key = pg.key.get_pressed()
+
+    #if key[pg.K_k]:
+    #    player_score += 1000
+
 
     if game_won == True:
         if key[pg.K_x]:
@@ -194,7 +199,7 @@ while running:
             player_rect.right += player_speed
             moved = True
 
-#        # W A up left
+        # W A up left
 #        if key[pg.K_w] and key[pg.K_a]:
 #            player_img = image_cut(player_spritesheet, 0, 1, 16, 16, 3)
 #            player_rect.left -= player_speed_diag
@@ -202,21 +207,21 @@ while running:
 #            moved =  True
 #   
 #        # W D up right
-#        if key[pg.K_w] and key[pg.K_d]:
+#        elif key[pg.K_w] and key[pg.K_d]:
 #            player_img = image_cut(player_spritesheet, 1, 1, 16, 16, 3)
 #            player_rect.top -= player_speed_diag
 #            player_rect.right += player_speed_diag
 #            moved = True
 #   
 #        # S A down left
-#        if key[pg.K_s] and key[pg.K_a]:
+#        elif key[pg.K_s] and key[pg.K_a]:
 #            player_img = image_cut(player_spritesheet, 0, 1, 16, 16, 3)
 #            player_rect.bottom += player_speed_diag
 #            player_rect.left -= player_speed_diag
 #            moved = True
 #   
 #        # S D down right
-#        if key[pg.K_s] and key[pg.K_d]:
+#        elif key[pg.K_s] and key[pg.K_d]:
 #            player_img = image_cut(player_spritesheet, 1, 1, 16, 16, 3)
 #            player_rect.right += player_speed_diag
 #            player_rect.bottom += player_speed_diag
@@ -238,9 +243,12 @@ while running:
 
     player_x, player_y = player_rect.centerx, player_rect.centery
 
-    elapsed_time += clock.get_time()
+    elapsed_time_oss += clock.get_time()
+    elapsed_time = elapsed_time_oss // 1000
     elapsed_time1 += clock.get_time()
     elapsed_time2 += clock.get_time()
+
+    
 
     if player_score < 1000:
         random_rgood()
@@ -251,12 +259,12 @@ while running:
     
     screen.fill("white")
     
-    #text_example = font.render(f"{elapsed_time2}", False, "#000000")
+    #text_example = font.render(f"{random_time}", False, "#000000")
 
     text_score = font.render(f"Score: {player_score}", False, "#000000")
     text_X = font.render(f"X: {player_x}", False, "#000000")
     text_Y = font.render(f"Y: {player_y}", False, "#000000")
-    text_time = font.render(f"time: {random_time}", False, "#000000")
+    text_time = font.render(f"time: {elapsed_time}", False, "#000000")
     text_rcounter = font.render(f"Red: {rgood_counter}", False,"#000000")
     text_gcounter = font.render(f"Green: {ggood_counter}", False,"#000000")
     text_win = font_win.render("!WIN!", False, "#DC1C1C")
@@ -264,7 +272,7 @@ while running:
     text_again2 = font_again.render("Press R to play again", False, "#2DE8DA")
     
     
-    #screen.blit(text_example, (screen_width-300, 10))
+   #screen.blit(text_example, (screen_width-300, 10))
     
     screen.blit(text_score, (screen_width-100, 10))
     screen.blit(text_X, (screen_width-100, 30))
@@ -278,7 +286,7 @@ while running:
     screen.blit(player_img, player_rect)
     screen.blit(rgood_img, rgood_rect)
 
-    if ggood_visibility:
+    if  ggood_visibility:
         screen.blit(ggood_img, ggood_rect)
 
     if ygood_visibility:
@@ -291,7 +299,7 @@ while running:
         player_rect.x = screen_width / 2
         player_rect.y = screen_height -100
         screen.blit(text_win, (screen_width // 2 - 70 , 200))
-        screen.blit(text_again1,(screen_width // 2 -300, 300))
+        screen.blit(text_again1,(screen_width // 2 -300 , 300))
         screen.blit(text_again2,(screen_width // 2 -300, 400))
 
 
