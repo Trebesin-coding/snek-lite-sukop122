@@ -20,6 +20,7 @@ def random_rgood():
     if player_rect.colliderect(rgood_rect):
         rgood_x = random.randint(0, screen_width - rgood_img.get_width())
         rgood_y = random.randint(0, screen_height - rgood_img.get_height())
+        
         rgood_rect = rgood_img.get_rect(midbottom=(rgood_x, rgood_y))
         player_score += 1
         rgood_counter += 1
@@ -86,15 +87,16 @@ elapsed_time2 = 0
 
 running = True
 #player
-player_spritesheet = pg.image.load("assets/characters/player/snake_spritesheet.png").convert_alpha()
+player_spritesheet = pg.image.load("assets/characters/player/spritesheet.png").convert_alpha()
 player_x = 150
 player_y = 150
 
 player_img_idle = image_cut(player_spritesheet, 0, 0 , 16, 16, 3)
 player_img = player_img_idle
 player_rect = player_img.get_rect(midbottom=(player_x, player_y))
+
 player_speed = 8
-player_speed_diag = player_speed / math.sqrt(2)
+#player_speed_diag = player_speed / math.sqrt(2)
 player_score = 0
 
 
@@ -136,9 +138,9 @@ while running:
 #MOVEMENT
 
     key = pg.key.get_pressed()
-
-    #if key[pg.K_k]:
-    #    player_score += 1000
+    diag = False
+    if key[pg.K_k]:
+        player_score += 1000
 
 
     if game_won == True:
@@ -164,13 +166,6 @@ while running:
             elapsed_time1 = 0
             elapsed_time2 = 0
             random_time = random.randint(10000, 30000)
-
-        
-        
-        
-                
-
-    
     
     if player_score < 1000:
         moved = False
@@ -200,7 +195,7 @@ while running:
             moved = True
 
         # W A up left
-#        if key[pg.K_w] and key[pg.K_a]:
+#        if key[pg.K_w] and key[pg.K_a] and diag:
 #            player_img = image_cut(player_spritesheet, 0, 1, 16, 16, 3)
 #            player_rect.left -= player_speed_diag
 #            player_rect.top -= player_speed_diag
