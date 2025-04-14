@@ -83,6 +83,8 @@ game_won = False
 elapsed_time_oss = 0
 elapsed_time1 = 0
 elapsed_time2 = 0
+speed_time = 0
+speedcd_time  = 0
 
 running = True
 #player
@@ -96,6 +98,9 @@ player_rect = player_img.get_rect(midbottom=(player_x, player_y))
 player_speed = 8
 player_speed_diag = player_speed / math.sqrt(2)
 player_score = 0
+player_speedb = True
+
+
 
 
 #red goodie
@@ -199,6 +204,30 @@ while running:
             player_rect.right += player_speed
             moved = True
 
+        # speed
+        if key[pg.K_LSHIFT] and player_speedb:
+            speed_time = 5000
+            
+            player_speedb = False
+
+        if speed_time > 0:
+            player_speed = 15
+            speed_time -= clock.get_time()
+        else:
+            player_speed = 8    
+            
+            
+        if speed_time <= 0 and not player_speedb:
+            speedcd_time += clock.get_time()  # Start cooldown timer
+
+        if speedcd_time >= 10000:  # Cooldown duration (10 seconds)
+            speedcd_time = 0
+            player_speedb = True 
+            
+
+                
+
+
         # W A up left
 #        if key[pg.K_w] and key[pg.K_a]:
 #            player_img = image_cut(player_spritesheet, 0, 1, 16, 16, 3)
@@ -243,10 +272,13 @@ while running:
 
     player_x, player_y = player_rect.centerx, player_rect.centery
 
+#time
     elapsed_time_oss += clock.get_time()
     elapsed_time = elapsed_time_oss // 1000
     elapsed_time1 += clock.get_time()
     elapsed_time2 += clock.get_time()
+    
+    
 
     
 
@@ -259,7 +291,9 @@ while running:
     
     screen.fill("white")
     
-    #text_example = font.render(f"{random_time}", False, "#000000")
+    text_example = font.render(f"{player_speedb}", False, "#000000")
+    text1_example = font.render(f"{speed_time}", False, "#000000")
+    text2_example = font.render(f"{speedcd_time}", False, "#000000")
 
     text_score = font.render(f"Score: {player_score}", False, "#000000")
     
@@ -273,7 +307,9 @@ while running:
     text_again2 = font_again.render("Press R to play again", False, "#2DE8DA")
     
     
-   #screen.blit(text_example, (screen_width-300, 10))
+    screen.blit(text_example, (screen_width-300, 10))
+    screen.blit(text1_example, (screen_width-400, 10))
+    screen.blit(text2_example, (screen_width-500, 10))
     
     screen.blit(text_score, (screen_width-100, 10))
     screen.blit(text_X, (screen_width-100, 30))
